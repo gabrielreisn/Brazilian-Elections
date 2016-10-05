@@ -6,10 +6,10 @@ public class Candidato {
 	private Partido partido;
 	private Coligação colicação;
 	private int votos;
-	private float percentVotosValidos;
+	private double percentVotosValidos;
 
 
-	public Candidato(String nome,int numero,int votos,float porcentagemDeVotos){
+	public Candidato(String nome,int numero,int votos,double porcentagemDeVotos){
 		this.nome = nome;
 		this.numero = numero;
 		this.votos = votos;
