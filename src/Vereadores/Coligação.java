@@ -1,8 +1,8 @@
 package Vereadores;
 
 public class Coligação {
-	int id;
-	String nome;
-	int votosDaColigação;
-	int candidadosEleitos;
+	private int id;
+	private String nome;
+	private int votosDaColigação;
+	private int candidadosEleitos;
 }
