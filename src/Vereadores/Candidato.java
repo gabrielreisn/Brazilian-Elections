@@ -2,11 +2,12 @@ package Vereadores;
 
 
 public class Candidato {
+	@SuppressWarnings("unused")
 	private int numero;
 	private String nome;
 	private Partido partido;
-	private Coligação colicação;
 	private int votos;
+	@SuppressWarnings("unused")
 	private float percentVotosValidos;
 
 
@@ -17,10 +18,25 @@ public class Candidato {
 		this.percentVotosValidos = porcentagemDeVotos;
 	}
 	
-	
+	@Override
 	public String toString(){
-		return ("nome:"+this.nome +"num: "+this.numero+"votos: "+this.votos+"percent: "+this.percentVotosValidos);
+		if(this.partido.getNomeDoPartido()!=this.partido.getNomeDaColigação()){
+			return (this.nome +" ("+this.partido.getNomeDoPartido()+", "+this.votos+" votos) - Coligação: "+this.partido.getColigaçãoDoPartido().getNomeDaColigação());
+		}
+		else{
+			return (this.nome +" ("+this.partido.getNomeDoPartido()+", "+this.votos+" votos)");
+		}
 	}
 
+	public void setPartido(Partido p){
+		this.partido = p;
+	}
 	
+	public String getNomeCandidato(){
+		return this.nome;
+	}
+	
+	public int getVotosDoCandidato(){
+		return this.votos;
+	}
 }

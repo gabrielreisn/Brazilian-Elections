@@ -5,10 +5,12 @@ import java.util.LinkedList;
 
 public class Partido {
 	private String nomeDoPartido;
+	
+	@SuppressWarnings("unused")
 	private int numeroDoPartido;
 	private List<Candidato> candidatosDoPartido = new LinkedList<Candidato>();
 	private List<Candidato> candidatosEleitos = new LinkedList<Candidato>();
-	private List<Coligação> coligaçõesDoPartido = new LinkedList<Coligação>();
+	private Coligação coligaçãoDoPartido;
 	
 	public Partido(String nomeDoPartido,int numeroDoPartido){
 		this.nomeDoPartido = nomeDoPartido;
@@ -17,8 +19,9 @@ public class Partido {
 		
 	}
 	
+	@Override
 	public String toString(){
-		return ("nome do partido: "+this.nomeDoPartido+"numero do partido: "+this.numeroDoPartido);
+		return (this.nomeDoPartido+", "+votosDoPartido()+" votos, "+QuantidadeDeCandidatosEleitos()+" candidatos eleitos");
 	}
 
 	public void adicionaCandidato(Candidato c){
@@ -29,8 +32,41 @@ public class Partido {
 		this.candidatosEleitos.add(c);
 	}
 	
-	public void adicionaColigação(Coligação col){
-		this.coligaçõesDoPartido.add(col);
+	public void setColigação(Coligação col){
+		this.coligaçãoDoPartido = col;
 	}
-
+	
+	public String getNomeDoPartido(){
+		return this.nomeDoPartido;
+	}
+	
+	public void getCandidatosDoPartido(){
+		for(Candidato c :candidatosDoPartido){
+			System.out.println(c.getNomeCandidato());
+		}
+	}
+	
+	public Coligação getColigaçãoDoPartido(){
+		return this.coligaçãoDoPartido;
+		//System.out.println(this.coligaçãoDoPartido);
+	}
+	
+	public String getNomeDaColigação(){
+		return this.coligaçãoDoPartido.getNomeDaColigação();
+	}
+	
+	public int votosDoPartido(){
+		int votos=0;
+		
+		for (Candidato c :candidatosDoPartido ){
+			votos = votos + c.getVotosDoCandidato();
+		}
+		
+		return votos;
+	}
+	
+	public int QuantidadeDeCandidatosEleitos(){
+		return this.candidatosEleitos.size();
+	}
+	
 }

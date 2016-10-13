@@ -4,23 +4,31 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.text.NumberFormat;
 import java.text.ParseException;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import java.util.Scanner;
 
+	
 
 public class Tester {
 
 	public static void main(String[] args) {
-		//Map<Integer,Candidato> candidatos = new HashMap<>();
-		HashSet<Candidato>hashCandidato = new HashSet<Candidato>();
-		HashSet<Partido>hashPartido = new HashSet<Partido>();
-		HashSet<Coligação>hashColigação = new HashSet<Coligação>();
-		
+		Map<Integer,Candidato> hashCandidato = new HashMap<>();
+		Map<String,Partido> hashPartido = new HashMap<>();
+		Map<String,Coligação> hashColigação = new HashMap<>();
+		List<Candidato> candidatosEleitos = new LinkedList<>();
 		
 		NumberFormat nf = NumberFormat.getInstance(Locale.forLanguageTag("pt-BR"));
 		Number numeroDeVotos = null;
 		Number porcentVotosValidos = null;
+		
+		String flagCandidatoEleito = null;
+		int numeroDeCandidatosEleitos=0;
 		
 		FileReader file = null;
 		
@@ -33,8 +41,6 @@ public class Tester {
 		}
 		
 		Scanner in = new Scanner(file);
-		//in.skip(in.nextLine());		//adicionar ao final para ignorar os parametros
-		//in.skip("\n");
 		
 		in.nextLine();
 		
@@ -42,71 +48,114 @@ public class Tester {
 			
 			
 			in.useDelimiter(";");
-			in.next();	//pula o numero inicial seq
+			flagCandidatoEleito = in.next();	//le o numero inicial seq (flag *)
+			
 			
 			int numeroDoCandidato = Integer.parseInt(in.next());		//le o numero do candidato
 			String nomeDoCandidato = in.next();							//le o nome do candidato
-			//System.out.println(in.findInLine("-"));
 			
-			String nomeDoPartido=null;
-			String nomeDaColigação=null;
+			String s = in.next();						//DAQUI ATE
+			String[] parts = null;
+			String nomeDoPartido;							//RESOLVE O PROBLEMA PARTIDO - COLIGAÇÃO
+			String nomeDaColigação;
 			
-			//if((in.findInLine("-").equals("-"))){
-				in.useDelimiter("- ");	//demilitador da divisão "partido - coligação"
-				nomeDoPartido = in.next();
-				//in.skip("- ");			//remove o "-" da coligação
-				in.useDelimiter(";");
-				nomeDaColigação = in.next();
-				//System.out.println("gatooo");
-				/*
-			}else if(in.findInLine("-").equals(null)){
-				nomeDoPartido = in.next();
-				//nomeDaColigação = " ";
-				//in.useDelimiter(";");
+			if(s.contains("-")){
+				parts = s.split(" - ");
+				nomeDoPartido = parts[0]; 
+				nomeDaColigação = parts[1];
 			}
-			*/
+			else{
+				nomeDoPartido = s;
+				nomeDaColigação = s;
+			}											//AQUI
+			
+			
 			try {
 				numeroDeVotos = nf.parse(in.next());
+				in.useDelimiter("%\n");
+				in.skip(";");
 				porcentVotosValidos =nf.parse(in.next());
+				
 			} catch (ParseException e) {
 				System.out.println("numero impossivel de realizar um parse");
 				e.printStackTrace();
 			}
 			
-			hashCandidato.add(new Candidato(nomeDoCandidato,numeroDoCandidato,numeroDeVotos.intValue(),porcentVotosValidos.floatValue()));
-			hashPartido.add(new Partido(nomeDoPartido, numeroDoCandidato));
-			hashColigação.add(new Coligação(nomeDaColigação));
 			
-			System.out.println("candidato add");
-			
-			
-			//Candidato c1 = new Candidato(nome,numero,n.intValue(),n2.floatValue());
-			//Partido p = new Partido("pps",numero);
-		
-			if(in.hasNextLine()){
-				in.nextLine();
+			if(!hashCandidato.containsKey(numeroDoCandidato)){
+				hashCandidato.put(numeroDoCandidato,(new Candidato(nomeDoCandidato,numeroDoCandidato,numeroDeVotos.intValue(),porcentVotosValidos.floatValue())));
 			}
 			
+			if(!hashPartido.containsKey(nomeDoPartido)){
+				hashPartido.put(nomeDoPartido,(new Partido(nomeDoPartido, numeroDoCandidato)));
+			}
+			
+			if(nomeDaColigação!=null && !hashColigação.containsKey(nomeDaColigação)){
+				hashColigação.put(nomeDaColigação,(new Coligação(nomeDaColigação)));
+			}
+			
+			if(flagCandidatoEleito.contains("*")){								//TRATA CASO DE CANDIDATO ELEITO	
+				numeroDeCandidatosEleitos++;
+				
+				Candidato c = hashCandidato.get(numeroDoCandidato);
+				candidatosEleitos.add(c);
+				
+				Partido p = hashPartido.get(nomeDoPartido);
+				p.adicionaCandidadoEleito(c);
+			}																//FIM
 			
 			
+			Candidato cand = hashCandidato.get(numeroDoCandidato);
+			Partido	  part = hashPartido.get(nomeDoPartido);
+			Coligação col  = hashColigação.get(nomeDaColigação);
 			
+			
+			cand.setPartido(part);
+			
+			part.adicionaCandidato(cand);
+			
+			
+			if(col!=null){
+			 col.adicionaPartido(part);
+			 part.setColigação(col);
+			}
 		}
 		
 		in.close();
 		
-		for (Candidato c : hashCandidato){
-			System.out.println(c);
+		int index=1;
+		System.out.println("Número de vagas: "+numeroDeCandidatosEleitos);
+		System.out.println("\nVereadores eleitos:");
+		
+		for (Candidato c : candidatosEleitos){
+			System.out.println(index+" - "+c);
+			index++;
 		}
 		
-		for (Partido p : hashPartido){
-			System.out.println(p);
+		
+		
+		
+		for (Entry<Integer, Candidato> entry : hashCandidato.entrySet()) {
+		    System.out.println(entry.getValue());
 		}
 		
-		for (Coligação col : hashColigação){
-			System.out.println(col);
-			//System.out.println(hashColigação.size());
-			
+		for (Entry<String, Partido> entry : hashPartido.entrySet()) {
+		    System.out.println(index+" - "+entry.getValue());
+		    index++;
 		}
+		
+		index=1;
+		for (Entry<String, Coligação> entry : hashColigação.entrySet()) {
+		    System.out.println(index+" - "+entry.getValue());
+		    index++;
+		}
+	
+		
+		
+		
+		index=1;
+		
+		
 		
 	}
 
