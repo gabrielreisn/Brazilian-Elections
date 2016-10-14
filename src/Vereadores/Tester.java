@@ -4,12 +4,12 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import java.util.Scanner;
 
@@ -123,6 +123,20 @@ public class Tester {
 		
 		in.close();
 		
+		List<Coligação> coligações = new LinkedList<>();
+		coligações.addAll(hashColigação.values());
+		Collections.sort(coligações);
+		
+		List<Partido> partidos = new LinkedList<>();
+		partidos.addAll(hashPartido.values());
+		Collections.sort(partidos);
+		
+		List<Candidato> Candidatos = new LinkedList<>();
+		Candidatos.addAll(hashCandidato.values());
+		Collections.sort(Candidatos);
+		
+		int totalDeVotosNominais=0;
+		
 		int index=1;
 		System.out.println("Número de vagas: "+numeroDeCandidatosEleitos);
 		System.out.println("\nVereadores eleitos:");
@@ -132,29 +146,62 @@ public class Tester {
 			index++;
 		}
 		
-		
-		
-		
-		for (Entry<Integer, Candidato> entry : hashCandidato.entrySet()) {
-		    System.out.println(entry.getValue());
-		}
-		
-		for (Entry<String, Partido> entry : hashPartido.entrySet()) {
-		    System.out.println(index+" - "+entry.getValue());
-		    index++;
-		}
+		System.out.println("\nCandidatos mais votados (em ordem decrescente de votação e respeitando número de vagas):");
 		
 		index=1;
-		for (Entry<String, Coligação> entry : hashColigação.entrySet()) {
-		    System.out.println(index+" - "+entry.getValue());
-		    index++;
+		for (Candidato c : Candidatos){
+			if(index<(numeroDeCandidatosEleitos+1)){
+				System.out.println(index+" - "+c);
+			}
+			index++;
 		}
-	
+		
+		System.out.println("\nTeriam sido eleitos se a votação fosse majoritária, e não foram eleitos:");
+		System.out.println("(com sua posição no ranking de mais votados)");
+		
+		index =1;
+		for (Candidato c : Candidatos){								//RESOLVE O PROBLEMA "CANDIDATOS COM VOTO MAJORITARIO QUE NAO FORAM ELEITOS
+			if(index<(numeroDeCandidatosEleitos+1)){
+				if(!candidatosEleitos.contains(c)){
+					System.out.println(index+" - "+c);			
+				}
+			}
+			index++;
+		}	  //FIM
 		
 		
+		System.out.println("\nEleitos, que se beneficiaram do sistema proporcional:");
+		System.out.println("(com sua posição no ranking de mais votados)");
+		
+		index =1;
+		for (Candidato c : Candidatos){								//RESOLVE O PROBLEMA "CANDIDATOS PUXADOS PELA COLIGAÇÃO"
+			if(index>(numeroDeCandidatosEleitos+1)){
+				if(candidatosEleitos.contains(c)){
+					System.out.println(index+" - "+c);			
+				}
+			}
+			index++;
+		}		//FIM
+		
+		System.out.println("\nVotação (nominal) das coligações e número de candidatos eleitos:");
+		
+		for (Coligação col : coligações){
+			System.out.println(index+" - "+col);
+			
+			totalDeVotosNominais = totalDeVotosNominais + col.votosDaColigação();
+			
+			index++;
+		}
+		
+		System.out.println("\nVotação (nominal) dos partidos e número de candidatos eleitos:");
 		
 		index=1;
+		for (Partido p : partidos){
+			System.out.println(index+" - "+p);
+			index++;
+		}
 		
+		System.out.println("\nTotal de votos nominais: "+totalDeVotosNominais);
 		
 		
 	}

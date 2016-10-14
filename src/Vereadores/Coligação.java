@@ -3,7 +3,7 @@ package Vereadores;
 import java.util.List;
 import java.util.LinkedList;
 
-public class Coligação {
+public class Coligação implements Comparable<Coligação> {
 	
 	private String nomeDaColigação;
 	private List<Partido> partidosDacoligação = new LinkedList<Partido>();
@@ -64,5 +64,16 @@ public class Coligação {
 		
 		return ("Coligação: "+this.nomeDaColigação+", "+votosDaColigação()+" votos, "+CandidatosEleitos()+" candidatos eleitos");
 		
+	}
+
+	@Override
+	public int compareTo(Coligação o) {
+		int comparedVotes = o.votosDaColigação();
+		
+		if(this.votosDaColigação() > comparedVotes){
+			return -1;
+		}
+		
+		return 1;
 	}
 }

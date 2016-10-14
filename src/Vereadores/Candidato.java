@@ -1,7 +1,7 @@
 package Vereadores;
 
 
-public class Candidato {
+public class Candidato implements Comparable<Candidato> {
 	@SuppressWarnings("unused")
 	private int numero;
 	private String nome;
@@ -38,5 +38,16 @@ public class Candidato {
 	
 	public int getVotosDoCandidato(){
 		return this.votos;
+	}
+
+	@Override
+	public int compareTo(Candidato o) {
+		int comparedVotes = o.getVotosDoCandidato();
+		
+		if(this.votos> comparedVotes){
+			return -1;
+		}
+		
+		return 1;
 	}
 }

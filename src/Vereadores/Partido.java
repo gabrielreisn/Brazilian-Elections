@@ -3,7 +3,7 @@ package Vereadores;
 import java.util.List;
 import java.util.LinkedList;
 
-public class Partido {
+public class Partido implements Comparable<Partido> {
 	private String nomeDoPartido;
 	
 	@SuppressWarnings("unused")
@@ -48,7 +48,6 @@ public class Partido {
 	
 	public Coligação getColigaçãoDoPartido(){
 		return this.coligaçãoDoPartido;
-		//System.out.println(this.coligaçãoDoPartido);
 	}
 	
 	public String getNomeDaColigação(){
@@ -67,6 +66,17 @@ public class Partido {
 	
 	public int QuantidadeDeCandidatosEleitos(){
 		return this.candidatosEleitos.size();
+	}
+
+	@Override
+	public int compareTo(Partido o) {
+		int comparedVotes = o.votosDoPartido();
+		
+		if(this.votosDoPartido() > comparedVotes){
+			return -1;
+		}
+		
+		return 1;
 	}
 	
 }
